@@ -1,0 +1,10 @@
+public class Exercise2FromLecture10 {
+
+    int a = 1;
+
+    {
+
+
+        }
+    }
+}
