@@ -28,10 +28,10 @@ public static void main (String[] args) {
         } else if (angle1 == 60 && angle2 == 60 && angle3 == 60) {
             System.out.println(validMessage + "Equilateral");
 
-        } else if (angle1 == 90 && angle2 == 90 && angle3 == 90) {
+        } else if (angle1 == 90 || angle2 == 90 || angle3 == 90) {
             System.out.println(validMessage + "Right-angled");
 
-        } else if (angle1 > 90 && angle2 > 90 && angle3 > 90) {
+        } else if (angle1 > 90 || angle2 > 90 || angle3 > 90) {
             System.out.println(validMessage + "Obtuse");
 
 

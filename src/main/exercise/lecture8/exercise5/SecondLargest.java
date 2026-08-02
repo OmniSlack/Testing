@@ -9,7 +9,7 @@ public class SecondLargest {
     }
 
     public static int findSecondLargest(int[] numbers) {
-        int secondLargest = -1;
+        int secondLargest = Integer.MIN_VALUE;
 
         if (numbers.length < 2) {
             return secondLargest;

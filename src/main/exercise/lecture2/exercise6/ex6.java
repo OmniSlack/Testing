@@ -16,7 +16,7 @@ public class ex6
 
         long minutes = scanner.nextLong();
         long years =  minutes / minutesInAYear;
-        long days = (minutes / minutesInAYear / hoursInDay) % daysInYear;
+        long days = (minutes % minutesInAYear) / (minutesInHour * hoursInDay);
 
 
         System.out.println("minutes : " + minutes+" years: " + years +" days: " + days  );
