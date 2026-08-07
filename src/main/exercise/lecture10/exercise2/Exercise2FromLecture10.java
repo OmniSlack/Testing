@@ -18,17 +18,13 @@ public class Exercise2FromLecture10 {
     public static void main(String[] args) {
         String filePatch = "F:\\Repos\\my_first_repo\\src\\com\\homework\\exercise\\lecture10\\number.txt";
 
-        try {
-            File file = new File(filePatch);
-            Scanner scanner = new Scanner(file);
+        try (Scanner scanner = new Scanner(new File(filePatch))) {
 
             String line = scanner.nextLine();
             int number = Integer.parseInt(line);
 
             double squareRoot = Math.sqrt(number);
             System.out.println("The square root of" + number + " is " + squareRoot);
-
-            scanner.close();
 
         } catch (FileNotFoundException e) {
             System.out.println("Error: The file was not found");

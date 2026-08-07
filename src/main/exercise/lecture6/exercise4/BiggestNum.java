@@ -18,10 +18,21 @@ public class BiggestNum {
             for (int col = 0; col < cols; col++) {
                 System.out.printf("matrix[%d,%d] = ", row, col);
                 matrix[row][col] = input.nextInt();
-                System.out.println("The matrix is created: " + Arrays.deepToString(matrix));
             }
         }
 
+        System.out.println("The matrix is created: " + Arrays.deepToString(matrix));
+
+        int biggest = matrix[0][0];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (matrix[row][col] > biggest) {
+                    biggest = matrix[row][col];
+                }
+            }
+        }
+
+        System.out.println("The biggest number in the matrix is: " + biggest);
     }
 
 }
