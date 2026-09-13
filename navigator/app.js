@@ -20,6 +20,7 @@ const STORAGE_KEYS = {
   messages: "navigator.messages",
   notifications: "navigator.notifications",
   chats: "navigator.chats",
+  lang: "navigator.lang",
 };
 
 const els = {
@@ -50,6 +51,7 @@ const els = {
   chatTitle: document.getElementById("chat-title"),
   chatLink: document.getElementById("chat-link"),
   chatsClear: document.getElementById("chats-clear"),
+  langSelect: document.getElementById("lang-select"),
 };
 
 /* ---------------------------------------------------------------------- *
@@ -60,6 +62,16 @@ let messages = loadJSON(STORAGE_KEYS.messages, []);
 let notifications = loadJSON(STORAGE_KEYS.notifications, []);
 let chats = loadJSON(STORAGE_KEYS.chats, []);
 let unreadCount = 0;
+
+let currentLang = "auto";
+try {
+  currentLang = localStorage.getItem(STORAGE_KEYS.lang) || "auto";
+} catch { /* ignore */ }
+els.langSelect.value = currentLang;
+
+function resolvedLang() {
+  return currentLang === "auto" ? (navigator.language || "en-US") : currentLang;
+}
 
 function loadJSON(key, fallback) {
   try {
@@ -265,6 +277,7 @@ function speak(text) {
   if (!els.voiceReplyToggle.checked || !("speechSynthesis" in window)) return;
 
   const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = resolvedLang();
   utter.rate = 1.02;
   utter.pitch = 0.95;
   utter.onstart = () => setStatus("speaking");
@@ -303,12 +316,13 @@ const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRec
 let recognizer = null;
 let micOn = false;
 let wakeWordMode = false;
+let suppressAutoRestart = false;
 
 function buildRecognizer() {
   const r = new SpeechRecognitionImpl();
   r.continuous = true;
   r.interimResults = true;
-  r.lang = navigator.language || "en-US";
+  r.lang = resolvedLang();
 
   r.onstart = () => setStatus("listening");
 
@@ -344,10 +358,10 @@ function buildRecognizer() {
   };
 
   r.onend = () => {
-    if (micOn) {
+    if (micOn && !suppressAutoRestart) {
       // keep listening continuously until the user turns it off
       try { r.start(); } catch { /* already starting */ }
-    } else {
+    } else if (!micOn) {
       setStatus("idle", 'Say "Navigator" or tap the mic to talk to me.');
     }
   };
@@ -393,6 +407,27 @@ function stopListening() {
 els.micBtn.addEventListener("click", () => {
   if (micOn) stopListening();
   else startListening();
+});
+
+els.langSelect.addEventListener("change", () => {
+  currentLang = els.langSelect.value;
+  try { localStorage.setItem(STORAGE_KEYS.lang, currentLang); } catch { /* ignore */ }
+
+  const wasOn = micOn;
+  suppressAutoRestart = true;
+  if (recognizer) {
+    try { recognizer.stop(); } catch { /* ignore */ }
+  }
+  recognizer = null;
+
+  // give the old recognizer a moment to fully stop before rebuilding
+  // with the new language, so the two don't overlap.
+  setTimeout(() => {
+    suppressAutoRestart = false;
+    if (wasOn) startListening();
+  }, 150);
+
+  addNotification("system", `Voice language set to ${els.langSelect.selectedOptions[0].textContent}.`);
 });
 
 els.wakeWordToggle.addEventListener("change", () => {
