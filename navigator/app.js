@@ -601,6 +601,14 @@ document.addEventListener(
  * Boot
  * ---------------------------------------------------------------------- */
 
+// On phone-width screens the Notifications/Chats panel becomes a
+// full-width overlay drawer (see the responsive CSS) — it must start
+// closed there, or it blocks the mic/composer/orb underneath it on
+// every load. On wider screens it's a normal sidebar and stays open.
+if (window.matchMedia && window.matchMedia("(max-width: 760px)").matches) {
+  els.notifPanel.classList.add("collapsed");
+}
+
 renderThread();
 renderNotifications();
 renderChats();
