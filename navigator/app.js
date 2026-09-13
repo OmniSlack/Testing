@@ -326,7 +326,13 @@ function buildRecognizer() {
 
   r.onerror = (event) => {
     if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-      addNotification("system", "Microphone access was blocked. Voice input is disabled until it's allowed.");
+      addNotification("system", "Microphone access was blocked. Allow it in your browser's site settings, then tap the mic again.");
+      stopListening();
+    } else if (event.error === "audio-capture") {
+      addNotification("system", "No microphone was found on this device.");
+      stopListening();
+    } else if (event.error === "network") {
+      addNotification("system", "Voice recognition lost its network connection and stopped.");
       stopListening();
     }
   };
@@ -348,13 +354,24 @@ function startListening() {
     addNotification("system", "This browser doesn't support voice input. Try Chrome or Edge.");
     return;
   }
+  if (!window.isSecureContext) {
+    addNotification("system", "Voice input needs a secure page (https:// or a local file) — this page isn't one.");
+    return;
+  }
   if (!recognizer) recognizer = buildRecognizer();
   micOn = true;
   els.micBtn.classList.add("active");
   try {
     recognizer.start();
-  } catch {
-    /* recognizer may already be running */
+  } catch (err) {
+    // Most permission failures surface later via recognizer.onerror, but a
+    // synchronous throw here (e.g. mic blocked outright by the page's
+    // embedding context) would otherwise fail silently — always say something.
+    if (err && err.name !== "InvalidStateError") {
+      micOn = false;
+      els.micBtn.classList.remove("active");
+      addNotification("system", "Couldn't start the microphone here — it may be blocked by this page's embedding context. Try opening Navigator directly in a browser tab.");
+    }
   }
 }
 
