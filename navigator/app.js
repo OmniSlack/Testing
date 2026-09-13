@@ -19,6 +19,7 @@
 const STORAGE_KEYS = {
   messages: "navigator.messages",
   notifications: "navigator.notifications",
+  chats: "navigator.chats",
 };
 
 const els = {
@@ -40,6 +41,15 @@ const els = {
   reminderForm: document.getElementById("reminder-form"),
   reminderText: document.getElementById("reminder-text"),
   reminderMinutes: document.getElementById("reminder-minutes"),
+  tabButtons: document.querySelectorAll(".tab-btn"),
+  tabNotifications: document.getElementById("tab-notifications"),
+  tabChats: document.getElementById("tab-chats"),
+  chatList: document.getElementById("chat-list"),
+  chatForm: document.getElementById("chat-form"),
+  chatPlatform: document.getElementById("chat-platform"),
+  chatTitle: document.getElementById("chat-title"),
+  chatLink: document.getElementById("chat-link"),
+  chatsClear: document.getElementById("chats-clear"),
 };
 
 /* ---------------------------------------------------------------------- *
@@ -48,6 +58,7 @@ const els = {
 
 let messages = loadJSON(STORAGE_KEYS.messages, []);
 let notifications = loadJSON(STORAGE_KEYS.notifications, []);
+let chats = loadJSON(STORAGE_KEYS.chats, []);
 let unreadCount = 0;
 
 function loadJSON(key, fallback) {
@@ -68,6 +79,12 @@ function saveMessages() {
 function saveNotifications() {
   try {
     localStorage.setItem(STORAGE_KEYS.notifications, JSON.stringify(notifications.slice(-100)));
+  } catch { /* ignore */ }
+}
+
+function saveChats() {
+  try {
+    localStorage.setItem(STORAGE_KEYS.chats, JSON.stringify(chats.slice(-200)));
   } catch { /* ignore */ }
 }
 
@@ -106,6 +123,52 @@ function renderNotifications() {
 
   els.notifBadge.hidden = unreadCount === 0;
   els.notifBadge.textContent = String(unreadCount);
+}
+
+function platformClass(platform) {
+  return "p-" + platform.toLowerCase().replace(/\s+/g, "-");
+}
+
+function renderChats() {
+  els.chatList.innerHTML = "";
+
+  if (chats.length === 0) {
+    const empty = document.createElement("li");
+    empty.className = "notif-empty";
+    empty.textContent = "No chats tracked yet.";
+    els.chatList.appendChild(empty);
+    return;
+  }
+
+  for (const c of [...chats].reverse()) {
+    const li = document.createElement("li");
+    li.className = "chat-item";
+    const time = new Date(c.at).toLocaleDateString([], { month: "short", day: "numeric" });
+    const linkHtml = c.link
+      ? `<a class="c-link" href="${escapeHtml(c.link)}" target="_blank" rel="noopener noreferrer">Open ↗</a>`
+      : `<span></span>`;
+    li.innerHTML = `
+      <div class="c-top">
+        <span class="platform-badge ${platformClass(c.platform)}">${escapeHtml(c.platform)}</span>
+        <span>${time}</span>
+      </div>
+      <span class="c-title">${escapeHtml(c.title)}</span>
+      ${linkHtml}
+    `;
+    const delBtn = document.createElement("button");
+    delBtn.className = "text-btn";
+    delBtn.textContent = "Remove";
+    delBtn.style.marginTop = "6px";
+    delBtn.addEventListener("click", () => removeChat(c.id));
+    li.appendChild(delBtn);
+    els.chatList.appendChild(li);
+  }
+}
+
+function removeChat(id) {
+  chats = chats.filter((c) => c.id !== id);
+  saveChats();
+  renderChats();
 }
 
 function escapeHtml(str) {
@@ -339,6 +402,54 @@ els.notifClear.addEventListener("click", () => {
   renderNotifications();
 });
 
+/* ---------------------------------------------------------------------- *
+ * Tabs (Notifications / Chats) inside the same slide-out panel
+ * ---------------------------------------------------------------------- */
+
+els.tabButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    els.tabButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    const isChats = btn.dataset.tab === "chats";
+    els.tabChats.hidden = !isChats;
+    els.tabNotifications.hidden = isChats;
+  });
+});
+
+/* ---------------------------------------------------------------------- *
+ * Chats tracker — a manual log of conversations you've had elsewhere
+ * (Grok, ChatGPT, Gemini, Copilot, etc). Saved on this device only;
+ * nothing is fetched from those services by this code.
+ * ---------------------------------------------------------------------- */
+
+els.chatForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const title = els.chatTitle.value.trim();
+  if (!title) return;
+
+  const entry = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    platform: els.chatPlatform.value,
+    title,
+    link: els.chatLink.value.trim(),
+    at: Date.now(),
+  };
+  chats.push(entry);
+  saveChats();
+  renderChats();
+
+  addNotification("system", `Tracked a new ${entry.platform} chat: "${entry.title}"`);
+
+  els.chatTitle.value = "";
+  els.chatLink.value = "";
+});
+
+els.chatsClear.addEventListener("click", () => {
+  chats = [];
+  saveChats();
+  renderChats();
+});
+
 els.reminderForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const text = els.reminderText.value.trim();
@@ -374,6 +485,7 @@ document.addEventListener(
 
 renderThread();
 renderNotifications();
+renderChats();
 
 if (messages.length === 0) {
   addMessage("navigator", "Navigator online. Voice recognition and replies run entirely in this browser — nothing is sent off this device.");

@@ -32,26 +32,64 @@
 
     <div class="body">
 
-      <!-- ===== Notifications panel ===== -->
+      <!-- ===== Notifications / Chats panel ===== -->
       <aside class="panel notif-panel" id="notif-panel">
-        <div class="panel-head">
-          <h2>Notifications</h2>
-          <button class="text-btn" id="notif-clear">Clear all</button>
+        <div class="panel-tabs">
+          <button class="tab-btn active" id="tab-btn-notifications" data-tab="notifications">Notifications</button>
+          <button class="tab-btn" id="tab-btn-chats" data-tab="chats">Chats</button>
         </div>
 
-        <ul class="notif-list" id="notif-list">
-          <!-- notifications injected here -->
-        </ul>
-
-        <form class="reminder-form" id="reminder-form">
-          <label for="reminder-text">New reminder</label>
-          <div class="reminder-row">
-            <input type="text" id="reminder-text" placeholder="Remind me to..." autocomplete="off" />
-            <input type="number" id="reminder-minutes" min="0" step="1" value="1" title="Minutes from now" />
-            <button type="submit" class="text-btn accent">Set</button>
+        <div class="tab-panel" id="tab-notifications">
+          <div class="panel-head">
+            <h2>Notifications</h2>
+            <button class="text-btn" id="notif-clear">Clear all</button>
           </div>
-          <p class="hint">Fires as a local, on-device notification only. Nothing is sent anywhere.</p>
-        </form>
+
+          <ul class="notif-list" id="notif-list">
+            <!-- notifications injected here -->
+          </ul>
+
+          <form class="reminder-form" id="reminder-form">
+            <label for="reminder-text">New reminder</label>
+            <div class="reminder-row">
+              <input type="text" id="reminder-text" placeholder="Remind me to..." autocomplete="off" />
+              <input type="number" id="reminder-minutes" min="0" step="1" value="1" title="Minutes from now" />
+              <button type="submit" class="text-btn accent">Set</button>
+            </div>
+            <p class="hint">Fires as a local, on-device notification only. Nothing is sent anywhere.</p>
+          </form>
+        </div>
+
+        <div class="tab-panel" id="tab-chats" hidden>
+          <div class="panel-head">
+            <h2>Tracked chats</h2>
+            <button class="text-btn" id="chats-clear">Clear all</button>
+          </div>
+
+          <ul class="chat-list" id="chat-list">
+            <!-- tracked chats injected here -->
+          </ul>
+
+          <form class="chat-form" id="chat-form">
+            <label for="chat-title">Track a chat</label>
+            <div class="chat-row">
+              <select id="chat-platform">
+                <option>Grok</option>
+                <option>ChatGPT</option>
+                <option>Gemini</option>
+                <option>Copilot</option>
+                <option>Microsoft Copilot</option>
+                <option>GitHub Copilot</option>
+              </select>
+              <input type="text" id="chat-title" placeholder="Title / topic" autocomplete="off" />
+            </div>
+            <div class="chat-row">
+              <input type="url" id="chat-link" placeholder="Link (optional)" autocomplete="off" />
+              <button type="submit" class="text-btn accent">Add</button>
+            </div>
+            <p class="hint">Saved on this device only. Nothing is fetched from these services automatically.</p>
+          </form>
+        </div>
       </aside>
 
       <!-- ===== Main console ===== -->
