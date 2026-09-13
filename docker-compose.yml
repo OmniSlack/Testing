@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        MAIN_CLASS: com.homework.exercise.lecture11.exercise2.Main
+    image: nomnom-exercises:latest
+    environment:
+      # Which exercise to run. Change this, or override per-run with:
+      #   docker compose run -e MAIN_CLASS=com.homework.exercise.lecture6.exercise5.ToDoList app
+      MAIN_CLASS: com.homework.exercise.lecture11.exercise2.Main
+
+    # --- Standard container hardening ---
+    # All of this is ordinary Docker/Compose config: any admin with access to
+    # this file or the Docker daemon can edit, override, or remove it the
+    # normal way. It is not designed to resist or lock out an operator.
+    read_only: true          # root filesystem is read-only
+    tmpfs:
+      - /tmp                 # writable scratch space only where needed
+    cap_drop:
+      - ALL                  # drop all Linux capabilities
+    security_opt:
+      - no-new-privileges:true
+    restart: "no"             # this is a one-shot CLI program, not a service
