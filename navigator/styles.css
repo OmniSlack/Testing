@@ -296,6 +296,7 @@ body {
   white-space: nowrap;
 }
 
+.platform-badge.p-claude { border-color: rgba(255, 165, 105, 0.5); color: #ffb37a; }
 .platform-badge.p-grok { border-color: rgba(255, 255, 255, 0.3); color: var(--text); }
 .platform-badge.p-chatgpt { border-color: rgba(116, 170, 156, 0.5); color: #74d6b9; }
 .platform-badge.p-gemini { border-color: rgba(150, 150, 255, 0.5); color: #a6b1ff; }
