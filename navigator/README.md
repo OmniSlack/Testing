@@ -26,6 +26,14 @@ into that later step, whatever framework it ends up using.
   system messages and reminders you set yourself, with an unread badge.
   Set a reminder with a message + minutes-from-now; it fires as a local
   on-device notification (and gets spoken, if replies are on).
+- **Chats tab** — next to Notifications: log conversations you've had on
+  Claude, Grok, ChatGPT, Gemini, Copilot, Microsoft Copilot, or GitHub
+  Copilot (platform, title, optional link). When this page runs as the
+  published Navigator artifact with the `db` capability granted, entries
+  sync live across every device/tab you open it on, via Claude's own
+  per-artifact store. Opened as the standalone files below (no such
+  runtime), entries just stay in that browser's `localStorage` instead —
+  same UI either way.
 - **Chat history & notifications persist** to `localStorage` on this
   device between visits.
 

@@ -166,6 +166,12 @@ function renderChats() {
 }
 
 function removeChat(id) {
+  if (dbApi) {
+    dbApi.collection("chats").doc(id).delete().catch((err) => {
+      addNotification("system", `Couldn't remove that synced chat (${err.code}).`);
+    });
+    return; // onSnapshot updates the list
+  }
   chats = chats.filter((c) => c.id !== id);
   saveChats();
   renderChats();
@@ -435,25 +441,70 @@ els.tabButtons.forEach((btn) => {
 
 /* ---------------------------------------------------------------------- *
  * Chats tracker — a manual log of conversations you've had elsewhere
- * (Grok, ChatGPT, Gemini, Copilot, etc). Saved on this device only;
- * nothing is fetched from those services by this code.
+ * (Grok, ChatGPT, Gemini, Copilot, etc). Nothing is fetched from those
+ * services by this code — you log entries yourself.
+ *
+ * When this page runs as a published Navigator artifact with the `db`
+ * capability granted, entries sync live across every device/tab you open
+ * it on (Claude's own per-artifact store — no third-party service
+ * involved). Outside that context (the standalone files opened directly
+ * in a browser), there's no such runtime and entries just stay local to
+ * that browser, same as before.
  * ---------------------------------------------------------------------- */
 
-els.chatForm.addEventListener("submit", (e) => {
+let dbApi = null;
+
+async function initChatSync() {
+  if (!(window.claude && typeof window.claude.use === "function")) return;
+  try {
+    dbApi = await window.claude.use("db");
+  } catch {
+    dbApi = null;
+  }
+  if (!dbApi) return; // not granted/available here — stays local-only, silently
+  subscribeChats();
+}
+
+function subscribeChats() {
+  dbApi.collection("chats").orderBy("at", "asc").limit(200).onSnapshot(
+    (snap) => {
+      chats = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      renderChats();
+    },
+    (err) => {
+      addNotification("system", `Chat sync stopped (${err.code}). New entries will stay local to this browser.`);
+      dbApi = null;
+    },
+  );
+}
+
+els.chatForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const title = els.chatTitle.value.trim();
   if (!title) return;
 
   const entry = {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     platform: els.chatPlatform.value,
     title,
     link: els.chatLink.value.trim(),
     at: Date.now(),
   };
-  chats.push(entry);
-  saveChats();
-  renderChats();
+
+  if (dbApi) {
+    try {
+      await dbApi.collection("chats").add(entry);
+      // onSnapshot delivers the update; nothing else to do here.
+    } catch (err) {
+      addNotification("system", `Couldn't sync that chat (${err.code}). Saved locally instead.`);
+      chats.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, ...entry });
+      saveChats();
+      renderChats();
+    }
+  } else {
+    chats.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, ...entry });
+    saveChats();
+    renderChats();
+  }
 
   addNotification("system", `Tracked a new ${entry.platform} chat: "${entry.title}"`);
 
@@ -461,11 +512,22 @@ els.chatForm.addEventListener("submit", (e) => {
   els.chatLink.value = "";
 });
 
-els.chatsClear.addEventListener("click", () => {
+els.chatsClear.addEventListener("click", async () => {
+  if (dbApi) {
+    try {
+      const snap = await dbApi.collection("chats").get();
+      await Promise.all(snap.docs.map((d) => dbApi.collection("chats").doc(d.id).delete()));
+    } catch (err) {
+      addNotification("system", `Couldn't clear synced chats (${err.code}).`);
+    }
+    return; // onSnapshot updates the list
+  }
   chats = [];
   saveChats();
   renderChats();
 });
+
+initChatSync();
 
 els.reminderForm.addEventListener("submit", (e) => {
   e.preventDefault();
