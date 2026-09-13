@@ -316,11 +316,16 @@ const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRec
 let recognizer = null;
 let micOn = false;
 let wakeWordMode = false;
-let suppressAutoRestart = false;
+let recognizerGeneration = 0;
 
 function buildRecognizer() {
+  const myGen = ++recognizerGeneration;
   const r = new SpeechRecognitionImpl();
-  r.continuous = true;
+  // Only "Always listen" needs a continuously-restarting recognizer. A
+  // plain mic tap should capture one utterance and stop — restarting it
+  // forever was re-acquiring the microphone (and re-prompting for
+  // permission) far more than necessary, and could jam the mic entirely.
+  r.continuous = wakeWordMode;
   r.interimResults = true;
   r.lang = resolvedLang();
 
@@ -358,10 +363,14 @@ function buildRecognizer() {
   };
 
   r.onend = () => {
-    if (micOn && !suppressAutoRestart) {
-      // keep listening continuously until the user turns it off
+    if (myGen !== recognizerGeneration) return; // superseded by a newer recognizer — ignore
+
+    if (micOn && wakeWordMode) {
+      // "Always listen" mode: keep listening until the user turns it off
       try { r.start(); } catch { /* already starting */ }
-    } else if (!micOn) {
+    } else {
+      micOn = false;
+      els.micBtn.classList.remove("active");
       setStatus("idle", 'Say "Navigator" or tap the mic to talk to me.');
     }
   };
@@ -378,7 +387,12 @@ function startListening() {
     addNotification("system", "Voice input needs a secure page (https:// or a local file) — this page isn't one.");
     return;
   }
-  if (!recognizer) recognizer = buildRecognizer();
+  if (recognizer) {
+    // always rebuild fresh so the current language/mode is honored, and so
+    // a stale instance never runs alongside the new one
+    try { recognizer.stop(); } catch { /* ignore */ }
+  }
+  recognizer = buildRecognizer();
   micOn = true;
   els.micBtn.classList.add("active");
   try {
@@ -413,19 +427,9 @@ els.langSelect.addEventListener("change", () => {
   currentLang = els.langSelect.value;
   try { localStorage.setItem(STORAGE_KEYS.lang, currentLang); } catch { /* ignore */ }
 
-  const wasOn = micOn;
-  suppressAutoRestart = true;
-  if (recognizer) {
-    try { recognizer.stop(); } catch { /* ignore */ }
-  }
-  recognizer = null;
-
-  // give the old recognizer a moment to fully stop before rebuilding
-  // with the new language, so the two don't overlap.
-  setTimeout(() => {
-    suppressAutoRestart = false;
-    if (wasOn) startListening();
-  }, 150);
+  // startListening() always rebuilds the recognizer, so restarting (if
+  // currently on) is enough to pick up the new language.
+  if (micOn) startListening();
 
   addNotification("system", `Voice language set to ${els.langSelect.selectedOptions[0].textContent}.`);
 });
