@@ -1,7 +1,7 @@
 "use strict";
 
 /* =========================================================================
- * NAVIGATOR — local-only voice assistant console
+ * OMNIMAX — local-only voice assistant console
  *
  * Everything in this file runs entirely in the browser:
  *   - voice input uses the browser's built-in SpeechRecognition
@@ -17,10 +17,10 @@
  * ========================================================================= */
 
 const STORAGE_KEYS = {
-  messages: "navigator.messages",
-  notifications: "navigator.notifications",
-  chats: "navigator.chats",
-  lang: "navigator.lang",
+  messages: "omnimax.messages",
+  notifications: "omnimax.notifications",
+  chats: "omnimax.chats",
+  lang: "omnimax.lang",
 };
 
 const els = {
@@ -109,7 +109,7 @@ function renderThread() {
   for (const m of messages) {
     const div = document.createElement("div");
     div.className = `msg ${m.from}`;
-    div.innerHTML = `<span class="who">${m.from === "user" ? "You" : "Navigator"}</span>${escapeHtml(m.text)}`;
+    div.innerHTML = `<span class="who">${m.from === "user" ? "You" : "OmniMax"}</span>${escapeHtml(m.text)}`;
     els.thread.appendChild(div);
   }
   els.thread.scrollTop = els.thread.scrollHeight;
@@ -213,7 +213,7 @@ function addNotification(kind, text) {
 
   if (Notification && Notification.permission === "granted") {
     try {
-      new Notification("Navigator", { body: text, silent: true });
+      new Notification("OmniMax", { body: text, silent: true });
     } catch { /* some browsers restrict this outside a user gesture */ }
   }
 }
@@ -252,7 +252,7 @@ function generateReply(input) {
   if (!text) return "I didn't catch that — try again?";
 
   if (/\b(hi|hello|hey)\b/.test(text)) {
-    return "Hello. Navigator online and listening.";
+    return "Hello. OmniMax online and listening.";
   }
   if (/time is it|current time/.test(text)) {
     return `It's ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`;
@@ -264,7 +264,7 @@ function generateReply(input) {
     return "I can set that — use the reminder box in the Notifications panel with how many minutes from now.";
   }
   if (/who are you|your name/.test(text)) {
-    return "I'm Navigator — your on-device assistant console. No requests of yours leave this browser unless you wire me up to a backend.";
+    return "I'm OmniMax — your on-device assistant console. No requests of yours leave this browser unless you wire me up to a backend.";
   }
   if (/thank/.test(text)) {
     return "Anytime.";
@@ -281,7 +281,7 @@ function speak(text) {
   utter.rate = 1.02;
   utter.pitch = 0.95;
   utter.onstart = () => setStatus("speaking");
-  utter.onend = () => setStatus("idle", 'Say "Navigator" or tap the mic to talk to me.');
+  utter.onend = () => setStatus("idle", 'Say "OmniMax" or tap the mic to talk to me.');
 
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utter);
@@ -291,7 +291,7 @@ function handleUserUtterance(text) {
   if (!text.trim()) return;
   addMessage("user", text);
   const reply = generateReply(text);
-  addMessage("navigator", reply);
+  addMessage("omnimax", reply);
   speak(reply);
 }
 
@@ -340,9 +340,9 @@ function buildRecognizer() {
 
     if (wakeWordMode) {
       const lower = finalText.toLowerCase();
-      const idx = lower.indexOf("navigator");
-      if (idx === -1) return; // ignore anything not addressed to Navigator
-      const after = finalText.slice(idx + "navigator".length).replace(/^[,:\s]+/, "");
+      const idx = lower.indexOf("omnimax");
+      if (idx === -1) return; // ignore anything not addressed to OmniMax
+      const after = finalText.slice(idx + "omnimax".length).replace(/^[,:\s]+/, "");
       handleUserUtterance(after || finalText);
     } else {
       handleUserUtterance(finalText);
@@ -371,7 +371,7 @@ function buildRecognizer() {
     } else {
       micOn = false;
       els.micBtn.classList.remove("active");
-      setStatus("idle", 'Say "Navigator" or tap the mic to talk to me.');
+      setStatus("idle", 'Say "OmniMax" or tap the mic to talk to me.');
     }
   };
 
@@ -404,7 +404,7 @@ function startListening() {
     if (err && err.name !== "InvalidStateError") {
       micOn = false;
       els.micBtn.classList.remove("active");
-      addNotification("system", "Couldn't start the microphone here — it may be blocked by this page's embedding context. Try opening Navigator directly in a browser tab.");
+      addNotification("system", "Couldn't start the microphone here — it may be blocked by this page's embedding context. Try opening OmniMax directly in a browser tab.");
     }
   }
 }
@@ -415,7 +415,7 @@ function stopListening() {
   if (recognizer) {
     try { recognizer.stop(); } catch { /* ignore */ }
   }
-  setStatus("idle", 'Say "Navigator" or tap the mic to talk to me.');
+  setStatus("idle", 'Say "OmniMax" or tap the mic to talk to me.');
 }
 
 els.micBtn.addEventListener("click", () => {
@@ -437,10 +437,10 @@ els.langSelect.addEventListener("change", () => {
 els.wakeWordToggle.addEventListener("change", () => {
   wakeWordMode = els.wakeWordToggle.checked;
   if (wakeWordMode) {
-    els.orbCaption.textContent = 'Always listening — say "Navigator" followed by your request.';
+    els.orbCaption.textContent = 'Always listening — say "OmniMax" followed by your request.';
     startListening();
   } else {
-    els.orbCaption.textContent = 'Say "Navigator" or tap the mic to talk to me.';
+    els.orbCaption.textContent = 'Say "OmniMax" or tap the mic to talk to me.';
     if (micOn) stopListening();
   }
 });
@@ -483,7 +483,7 @@ els.tabButtons.forEach((btn) => {
  * (Grok, ChatGPT, Gemini, Copilot, etc). Nothing is fetched from those
  * services by this code — you log entries yourself.
  *
- * When this page runs as a published Navigator artifact with the `db`
+ * When this page runs as a published OmniMax artifact with the `db`
  * capability granted, entries sync live across every device/tab you open
  * it on (Claude's own per-artifact store — no third-party service
  * involved). Outside that context (the standalone files opened directly
@@ -614,10 +614,10 @@ renderNotifications();
 renderChats();
 
 if (messages.length === 0) {
-  addMessage("navigator", "Navigator online. Voice recognition and replies run entirely in this browser — nothing is sent off this device.");
+  addMessage("omnimax", "OmniMax online. Voice recognition and replies run entirely in this browser — nothing is sent off this device.");
 }
 if (notifications.length === 0) {
-  addNotification("system", "Navigator initialized.");
+  addNotification("system", "OmniMax initialized.");
   unreadCount = 0; // don't badge the very first boot notice
   renderNotifications();
 }

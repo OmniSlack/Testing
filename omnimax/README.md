@@ -1,6 +1,6 @@
-# Navigator
+# OmniMax
 
-A personalized, Jarvis-style voice assistant console — branded **Navigator**.
+A personalized, Jarvis-style voice assistant console — branded **OmniMax**.
 Plain HTML/CSS/JS, no build step, no framework, no server. Open
 `index.html` in a browser (Chrome or Edge recommended for voice input) and
 it works.
@@ -15,12 +15,12 @@ into that later step, whatever framework it ends up using.
 ## Features
 
 - **Jarvis-style HUD theme** — dark console, glowing cyan orb that pulses
-  while Navigator is listening or speaking, status pill in the header.
+  while OmniMax is listening or speaking, status pill in the header.
 - **Voice input ("listen")** — tap the mic button to talk, or enable
-  "Always listen for Navigator" for hands-free wake-word style use (say
-  "Navigator" followed by your request). Uses the browser's built-in
+  "Always listen for OmniMax" for hands-free wake-word style use (say
+  "OmniMax" followed by your request). Uses the browser's built-in
   `SpeechRecognition` API.
-- **Spoken replies** — Navigator can read its replies back using the
+- **Spoken replies** — OmniMax can read its replies back using the
   browser's built-in `SpeechSynthesis` API. Toggle with "Speak replies".
 - **Notifications panel** — a slide-out panel (bell icon, top right) showing
   system messages and reminders you set yourself, with an unread badge.
@@ -28,14 +28,14 @@ into that later step, whatever framework it ends up using.
   on-device notification (and gets spoken, if replies are on).
 - **Chats tab** — next to Notifications: log conversations you've had on
   Claude, ChatGPT, or Gemini (platform, title, optional link). When this
-  page runs as the published Navigator artifact with the `db` capability
+  page runs as the published OmniMax artifact with the `db` capability
   granted, entries sync live across every device/tab you open it on, via
   Claude's own per-artifact store. Opened as the standalone files below
   (no such runtime), entries just stay in that browser's `localStorage`
   instead — same UI either way.
 - **Installable as a home-screen app** — `manifest.json` + Apple's
   "web app capable" meta tags let iOS/Android's "Add to Home Screen" launch
-  Navigator full-screen with its own icon and name, no browser bar. This
+  OmniMax full-screen with its own icon and name, no browser bar. This
   only works when `index.html` is opened directly (e.g. in Safari) as the
   page itself — a page embedded in another site's iframe (like a hosted
   preview link) can't control the home-screen icon, since the OS reads
@@ -45,10 +45,10 @@ into that later step, whatever framework it ends up using.
 
 ## Real AI replies (published artifact only)
 
-The **published Navigator artifact** (the claude.ai link, not these
+The **published OmniMax artifact** (the claude.ai link, not these
 standalone files) can use Claude's own `sample` capability to generate
 real replies — it runs through your own Claude usage, with no API key to
-manage or store. It's conversation-only by design: Navigator talks, it
+manage or store. It's conversation-only by design: OmniMax talks, it
 never takes actions in other apps or services. If that capability isn't
 granted in a given view, or a call fails, it falls back to the same local
 placeholder described below, with a notification saying so.
@@ -62,7 +62,7 @@ placeholder described below, with a notification saying so.
   `app.js`, a small local rule-based placeholder, clearly marked in the
   source. Wiring these files up to a real AI backend would be a
   deliberate, separate step left for you to set up explicitly.
-- Navigator (either version) never takes actions in other apps or
+- OmniMax (either version) never takes actions in other apps or
   services — it only converses.
 - Notifications are local-only (the browser `Notification` API on this
   device). Nothing is pushed from a server.
@@ -81,12 +81,12 @@ placeholder described below, with a notification saying so.
    browser/preview) — e.g. from the Files app, tap the file and choose
    "Open in Safari" if it doesn't open there by default.
 2. Tap the **Share** icon, then **Add to Home Screen**.
-3. Navigator now has its own icon on your home screen and opens full-screen
+3. OmniMax now has its own icon on your home screen and opens full-screen
    with no Safari address bar.
 
 Note: iOS Safari does not implement the Web Speech *recognition* API at
 all (it does support spoken replies) — this is an Apple platform
-limitation, true whether Navigator is installed this way, opened in a
+limitation, true whether OmniMax is installed this way, opened in a
 regular Safari tab, or viewed through another app's preview. Typed input,
 notifications, reminders, and the Chats tracker all work normally
 regardless.
@@ -96,5 +96,16 @@ regardless.
 Voice input relies on the Web Speech API, which is best supported in
 Chromium-based browsers (Chrome, Edge). The rest of the app (typed chat,
 notifications, reminders) works in any modern browser; if voice input isn't
-supported, Navigator will say so in the notifications panel and the typed
+supported, OmniMax will say so in the notifications panel and the typed
 composer still works normally.
+
+## Renamed from "Navigator"
+
+This project was originally branded "Navigator." It was renamed to
+**OmniMax** because the name collided with `window.navigator`, the
+browser's own built-in JavaScript object (used internally by this app,
+e.g. `navigator.language`) — confusing to work with under the same name.
+Renaming reset a few internal `localStorage` key names (`omnimax.*`
+instead of `navigator.*`), so anyone who had used the old version will see
+a fresh local state once on this version; synced Chats entries (stored via
+the `db` capability, keyed independently of this name) were not affected.

@@ -1,6 +1,6 @@
 {
-  "name": "Navigator",
-  "short_name": "Navigator",
+  "name": "OmniMax",
+  "short_name": "OmniMax",
   "description": "Jarvis-style voice assistant console with notifications and a chat tracker.",
   "start_url": "./index.html",
   "scope": "./",
