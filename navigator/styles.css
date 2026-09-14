@@ -47,7 +47,8 @@ body {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 12px 20px;
+  padding: calc(12px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) 12px
+    calc(20px + env(safe-area-inset-left));
   border-bottom: 1px solid var(--line);
   background: rgba(6, 10, 18, 0.8);
   backdrop-filter: blur(6px);
@@ -401,7 +402,8 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 18px 24px;
+  padding: 18px calc(24px + env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom))
+    calc(24px + env(safe-area-inset-left));
   min-width: 0;
 }
 
@@ -618,7 +620,8 @@ body {
   }
 
   .console {
-    padding: 14px 14px;
+    padding: 14px calc(14px + env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom))
+      calc(14px + env(safe-area-inset-left));
   }
 
   .msg {

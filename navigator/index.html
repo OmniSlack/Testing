@@ -2,9 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Navigator</title>
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- PWA / "Add to Home Screen" support. Only takes effect when this file
+       is opened directly (e.g. in Safari) as the top-level page — a page
+       embedded in another site's iframe (like a hosted preview) can't
+       control the home-screen icon/name, since the browser reads these
+       tags from whatever page is actually at the top of the tab. -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#060a12" />
+
+  <!-- iOS: makes "Add to Home Screen" launch full-screen, no Safari
+       chrome, with Navigator's own icon and name. -->
+  <link rel="apple-touch-icon" href="icons/icon-512.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Navigator" />
 </head>
 <body>
   <div class="app">
@@ -75,12 +90,8 @@
             <div class="chat-row">
               <select id="chat-platform">
                 <option>Claude</option>
-                <option>Grok</option>
                 <option>ChatGPT</option>
                 <option>Gemini</option>
-                <option>Copilot</option>
-                <option>Microsoft Copilot</option>
-                <option>GitHub Copilot</option>
               </select>
               <input type="text" id="chat-title" placeholder="Title / topic" autocomplete="off" />
             </div>

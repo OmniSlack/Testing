@@ -27,13 +27,19 @@ into that later step, whatever framework it ends up using.
   Set a reminder with a message + minutes-from-now; it fires as a local
   on-device notification (and gets spoken, if replies are on).
 - **Chats tab** — next to Notifications: log conversations you've had on
-  Claude, Grok, ChatGPT, Gemini, Copilot, Microsoft Copilot, or GitHub
-  Copilot (platform, title, optional link). When this page runs as the
-  published Navigator artifact with the `db` capability granted, entries
-  sync live across every device/tab you open it on, via Claude's own
-  per-artifact store. Opened as the standalone files below (no such
-  runtime), entries just stay in that browser's `localStorage` instead —
-  same UI either way.
+  Claude, ChatGPT, or Gemini (platform, title, optional link). When this
+  page runs as the published Navigator artifact with the `db` capability
+  granted, entries sync live across every device/tab you open it on, via
+  Claude's own per-artifact store. Opened as the standalone files below
+  (no such runtime), entries just stay in that browser's `localStorage`
+  instead — same UI either way.
+- **Installable as a home-screen app** — `manifest.json` + Apple's
+  "web app capable" meta tags let iOS/Android's "Add to Home Screen" launch
+  Navigator full-screen with its own icon and name, no browser bar. This
+  only works when `index.html` is opened directly (e.g. in Safari) as the
+  page itself — a page embedded in another site's iframe (like a hosted
+  preview link) can't control the home-screen icon, since the OS reads
+  these tags from whatever page is actually at the top of the tab.
 - **Chat history & notifications persist** to `localStorage` on this
   device between visits.
 
@@ -56,6 +62,23 @@ into that later step, whatever framework it ends up using.
 - `styles.css` — the Jarvis/HUD dark theme, responsive down to phone widths.
 - `app.js` — all behavior: voice input/output, notifications, local reply
   engine, persistence.
+- `manifest.json`, `icons/icon-512.png` — home-screen app metadata/icon.
+
+## Installing on an iPhone (Add to Home Screen)
+
+1. Open `index.html` directly in **Safari** (not another app's in-app
+   browser/preview) — e.g. from the Files app, tap the file and choose
+   "Open in Safari" if it doesn't open there by default.
+2. Tap the **Share** icon, then **Add to Home Screen**.
+3. Navigator now has its own icon on your home screen and opens full-screen
+   with no Safari address bar.
+
+Note: iOS Safari does not implement the Web Speech *recognition* API at
+all (it does support spoken replies) — this is an Apple platform
+limitation, true whether Navigator is installed this way, opened in a
+regular Safari tab, or viewed through another app's preview. Typed input,
+notifications, reminders, and the Chats tracker all work normally
+regardless.
 
 ## Browser support
 
