@@ -43,16 +43,27 @@ into that later step, whatever framework it ends up using.
 - **Chat history & notifications persist** to `localStorage` on this
   device between visits.
 
+## Real AI replies (published artifact only)
+
+The **published Navigator artifact** (the claude.ai link, not these
+standalone files) can use Claude's own `sample` capability to generate
+real replies — it runs through your own Claude usage, with no API key to
+manage or store. It's conversation-only by design: Navigator talks, it
+never takes actions in other apps or services. If that capability isn't
+granted in a given view, or a call fails, it falls back to the same local
+placeholder described below, with a notification saying so.
+
 ## What this app does *not* do
 
-- It does **not** call any external API, backend, or third-party service.
-  Voice recognition and synthesis are handled by the browser itself; no
-  audio or text is sent anywhere by this code.
-- The assistant's replies come from `generateReply()` in `app.js` — a
-  small, local, rule-based placeholder ("brain"). It's clearly marked in
-  the source. Wiring Navigator up to a real AI backend is a deliberate,
-  separate step (an outside API call), left for you to decide on and set
-  up explicitly rather than added silently here.
+- These standalone files (`index.html` opened directly, or via the zip)
+  call **no** external API, backend, or third-party service at all — not
+  even Claude. Voice recognition and synthesis are handled by the browser
+  itself; the assistant's replies come from `generateReply()` in
+  `app.js`, a small local rule-based placeholder, clearly marked in the
+  source. Wiring these files up to a real AI backend would be a
+  deliberate, separate step left for you to set up explicitly.
+- Navigator (either version) never takes actions in other apps or
+  services — it only converses.
 - Notifications are local-only (the browser `Notification` API on this
   device). Nothing is pushed from a server.
 
