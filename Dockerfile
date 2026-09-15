@@ -6,10 +6,17 @@
 # each with its own class under src/main/exercise/**. MAIN_CLASS selects which
 # one to run; override it at build time (--build-arg) or run time (-e).
 #
-# Example:
+# Example (prefer `docker compose run app` — see docker-compose.yml for the
+# hardening flags these plain `docker run` forms don't include):
 #   docker build -t nomnom-exercises .
-#   docker run --rm nomnom-exercises
-#   docker run --rm -e MAIN_CLASS=com.homework.exercise.lecture6.exercise5.ToDoList nomnom-exercises
+#   docker run --rm --read-only --tmpfs /tmp --cap-drop ALL \
+#     --security-opt no-new-privileges nomnom-exercises
+#   # Exercises that read stdin (e.g. ToDoList) need -i:
+#   docker run --rm -i -e MAIN_CLASS=com.homework.exercise.lecture6.exercise5.ToDoList \
+#     nomnom-exercises
+#   # To run something other than the selected exercise (e.g. for diagnostics),
+#   # override the entrypoint rather than passing a trailing command:
+#   docker run --rm --entrypoint java nomnom-exercises -version
 
 ## ---- Build stage: compile everything with the JDK ----
 FROM eclipse-temurin:21-jdk-alpine AS build
@@ -33,4 +40,4 @@ USER app
 ARG MAIN_CLASS=com.homework.exercise.lecture11.exercise2.Main
 ENV MAIN_CLASS=${MAIN_CLASS}
 
-ENTRYPOINT ["sh", "-c", "exec java -cp classes \"$MAIN_CLASS\""]
+ENTRYPOINT ["sh", "-c", "exec java -cp classes \"$MAIN_CLASS\" \"$@\"", "--"]
