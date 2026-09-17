@@ -1,0 +1,26 @@
+{
+  "name": "OmniMax",
+  "short_name": "OmniMax",
+  "version": "1.0.0",
+  "description": "Jarvis-style voice assistant console with notifications and a chat tracker.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#060a12",
+  "theme_color": "#060a12",
+  "icons": [
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
