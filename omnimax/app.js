@@ -16,6 +16,10 @@
  * here without confirmation).
  * ========================================================================= */
 
+/* Single source of truth for the app version. Keep this in step with
+ * "version" in manifest.json and the Version section of README.md. */
+const APP_VERSION = "1.0.0";
+
 const STORAGE_KEYS = {
   messages: "omnimax.messages",
   notifications: "omnimax.notifications",
@@ -24,6 +28,7 @@ const STORAGE_KEYS = {
 };
 
 const els = {
+  brandVersion: document.getElementById("brand-version"),
   statusPill: document.getElementById("status-pill"),
   statusText: document.getElementById("status-text"),
   orb: document.getElementById("orb"),
@@ -607,6 +612,11 @@ document.addEventListener(
 // every load. On wider screens it's a normal sidebar and stays open.
 if (window.matchMedia && window.matchMedia("(max-width: 760px)").matches) {
   els.notifPanel.classList.add("collapsed");
+}
+
+if (els.brandVersion) {
+  els.brandVersion.textContent = `v${APP_VERSION}`;
+  els.brandVersion.title = `OmniMax ${APP_VERSION}`;
 }
 
 renderThread();

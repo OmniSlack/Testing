@@ -5,6 +5,19 @@ Plain HTML/CSS/JS, no build step, no framework, no server. Open
 `index.html` in a browser (Chrome or Edge recommended for voice input) and
 it works.
 
+## Version
+
+**OmniMax 1.0.0** — shown as a chip next to the wordmark in the header.
+
+The version is declared in three places and they must stay in step:
+
+- `app.js` — `APP_VERSION`, the single source of truth the UI renders from.
+- `manifest.json` — `"version"`, what the home-screen app reports.
+- this section.
+
+Bump all three in the same commit. Before this release the app carried no
+version at all, so a build could only be identified by its commit SHA.
+
 ## Why plain HTML/CSS/JS
 
 This is meant as the design/UX starting point before it gets folded into a

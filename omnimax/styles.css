@@ -71,6 +71,17 @@ body {
   box-shadow: 0 0 10px var(--accent), inset 0 0 6px var(--accent);
 }
 
+.brand-version {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 999px;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  opacity: 0.85;
+}
+
 .status {
   margin-left: auto;
   display: flex;
