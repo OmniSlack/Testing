@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: .
+      # Sets the image's baked-in default MAIN_CLASS. NOTE: the runtime
+      # `environment.MAIN_CLASS` below always wins at container start — if
+      # you change only this build arg and don't also update `environment`,
+      # your change will silently have no effect. Change both, or override
+      # per-run instead:
+      #   docker compose run -e MAIN_CLASS=com.homework.exercise.lecture6.exercise5.ToDoList app
+      args:
+        MAIN_CLASS: com.homework.exercise.lecture11.exercise2.Main
+    image: nomnom-exercises:latest
+    environment:
+      MAIN_CLASS: com.homework.exercise.lecture11.exercise2.Main
+
+    # --- Standard container hardening ---
+    # All of this is ordinary Docker/Compose config: any admin with access to
+    # this file or the Docker daemon can edit, override, or remove it the
+    # normal way. It is not designed to resist or lock out an operator.
+    read_only: true                # root filesystem is read-only
+    volumes:
+      - type: tmpfs                # writable scratch space only where needed,
+        target: /tmp                # capped so a runaway process can't fill RAM
+        tmpfs:
+          size: 67108864 # 64MB
+    cap_drop:
+      - ALL                        # drop all Linux capabilities
+    security_opt:
+      - no-new-privileges:true
+    network_mode: none             # these are offline CLI exercises; no network needed
+    mem_limit: 256m
+    cpus: 1.0
+    pids_limit: 64
+    restart: "no"                  # this is a one-shot CLI program, not a service
