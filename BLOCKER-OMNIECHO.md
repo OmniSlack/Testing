@@ -1,6 +1,7 @@
 # BLOCKER — OmniEcho name / omniecho.com
 
 Recorded: 2026-09-18 · Status: **OPEN — on hold, unverified**
+Last attempt: 2026-09-18 — steps 1–5 blocked by egress policy (see log)
 
 Companion to `PRENOS.md`. Same rule: state does not live in chat
 scrollback. Update this file in the same commit as whatever changes it.
@@ -93,6 +94,48 @@ Decision rule: the domain is usable only if step 1 or 6 shows the
 registrant/account as ours. Neither a press article nor an IP address
 settles it.
 
+## Attempt log — 2026-09-18
+
+Steps 1–5 were authorized and attempted. **None of them could run**: this
+session's network egress policy rejects CONNECT to every external host
+(403 at the gateway — `rdap.verisign.com`, `dns.google`,
+`cloudflare-dns.com`, `rdap.org`, `omniecho.com`, and `google.com` alike).
+Anthropic-side `WebFetch` enforces the same policy. No third-party fetch
+proxy was used to get around it.
+
+So the ownership question is **still open**. Steps 1–5 have to be run from
+a machine with normal outbound access — they take under a minute.
+
+Web search (a different, permitted channel) did return two things:
+
+- **"The Omni Echo" is a sound-art installation**, not a software or email
+  product: an immersive reverberation chamber by Chris Warren, a sound
+  designer teaching at San Diego State University, shown 1–15 May 2022 at
+  Art Produce, San Diego. His installations are published under
+  `alloyelectric.com`, not under `omniecho.com`. That is a *signal*, not a
+  finding: it weakens the assumption that this project holds the domain,
+  and it does not establish who does.
+- A separate `github.com/OmniEcho` organisation appears in results.
+  Unverified — not inspected.
+
+### Material finding: `OmniSlack/omniecho-core`
+
+There is an **OmniEcho repository inside our own organisation**, confirmed
+against the GitHub API (not search index): `OmniSlack/omniecho-core`,
+public, `can_push: true`, last pushed **2026-09-17 19:07 UTC** — the same
+day this blocker was raised, roughly twenty minutes after PR #4 was
+opened.
+
+This reframes the blocker. "OmniEcho" is not only an outside name; it is
+an active repository under our own org. Whether it is the thing the Loops
+plan belongs to, and whether it carries domain or sending configuration,
+is unknown — the repository is outside this session's allowed scope and
+was not read.
+
+Until it is read, treat the name collision as **unresolved in both
+directions**: an unrelated art project uses the name publicly, and we
+ourselves have a repo under it.
+
 ## Standing constraints
 
 - No DNS changes are authorized. Nothing in this file requests any.
@@ -104,6 +147,14 @@ settles it.
 
 ## Next action
 
-Run steps 1–2 above, paste the output here, and re-grade the table. If
-the domain is held by the unrelated project, the decision is a rename or
-a different domain — not a DNS workaround.
+Two things, in this order:
+
+1. **Read `OmniSlack/omniecho-core`.** It is ours and it is active. Before
+   arguing about an outside name collision, establish what we already
+   have under that name and whether any domain or sending config lives
+   there. Requires adding the repo to the session.
+2. **Run steps 1–5 from a machine with outbound access** and paste the
+   output here, then re-grade the table.
+
+If the domain turns out to be held by the unrelated project, the decision
+is a rename or a different domain — not a DNS workaround.
