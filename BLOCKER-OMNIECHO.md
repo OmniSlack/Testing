@@ -22,6 +22,8 @@ added and sending cannot be switched on.
 | Claim | Grade | Basis |
 | --- | --- | --- |
 | The blocker card was added | CONFIRMED | The card itself |
+| The card's "domain taken" claim is an independent finding | REFUTED | It traces to a prior session that stopped at "awaiting Namecheap check" — an unfinished lookup, not a result |
+| `omniecho-core` is our own work | CONFIRMED | Commit authored and committed under our address; unsigned and snapshot-committed — see provenance below |
 | A separate project "The Omni Echo" (Chris Warren) exists | CONFIRMED | Public press coverage (KPBS, Space 4 Art) |
 | `omniecho.com` resolves to A record `173.236.253.152` | UNVERIFIED | Reported in the card only; no lookup run here |
 | That unrelated project controls `omniecho.com` | UNVERIFIED | Press coverage shows a project exists; it does not show who holds the domain |
@@ -155,6 +157,55 @@ name.
 
 That reduces the domain question from blocking to preparatory. It does not
 answer who holds `omniecho.com` — that still needs steps 1–5.
+
+### Provenance of `omniecho-core` — it is ours, committed under our identity
+
+Asked directly, because the repo reads as unfamiliar work. What git records:
+
+    commit    136298fe4bc5b213056eb0a8c530187062635f6f
+    author    omnivorous <mromnivorous@gmail.com>
+    committer omnivorous <mromnivorous@gmail.com>
+    date      2026-09-07 00:08:23 +0300
+    signature none (%G? = N)
+
+Our own address on both fields — but three things qualify that:
+
+- **The whole repository is one commit.** `git fetch --depth=100` then
+  `git rev-list --count HEAD` returns `1`, while the README narrates a
+  v0.1 → v0.2 → v0.3 history with defects D1 and D2 "found by adversarial
+  probing". That history exists nowhere in git. The content was produced
+  elsewhere and committed as a single snapshot.
+- **No Claude co-author trailer**, unlike every commit in `Testing`,
+  which carries `Co-authored-by: Claude`. This commit did not go through
+  that path.
+- **Unsigned.** Git authorship is self-asserted; it shows which identity
+  was configured, not who wrote the code.
+
+### Where the blocker actually came from
+
+The account's own session records (data, not proof) show a cluster of
+work on this same material:
+
+| Session | Recorded state |
+| --- | --- |
+| "Post-quantum cryptography audit enforcement" | *"domain lookup: omniecho.com taken; awaiting Namecheap check"* |
+| "Бро" (17 Sep, source = `omniecho-core`) | *"user message unintelligible; cannot proceed"* |
+| "गीत repository version sync" (PR #4 / this notice) | blocked: *"Claude app needs access to omniecho-core repo"* |
+| "Jarvis-style navigator" | *"message context mismatch — OmniEcho vs OmniMax sessions"* |
+
+Two consequences:
+
+1. **The blocker is not an independent external finding.** It is the tail
+   of the PQC session, which stopped at *"awaiting Namecheap check"* — an
+   **unfinished lookup**, later restated in the Project card as settled
+   fact. That weakens the card further than the grading table already did.
+2. **This exact confusion was logged once before**: a session ended on
+   *"OmniEcho vs OmniMax context mismatch"* days earlier.
+
+The mundane explanation for the whole blocker: several parallel sessions
+across two repositories with overlapping `Omni*` names, state re-narrated
+between them. That is precisely the failure `PRENOS.md` exists to stop —
+and `PRENOS.md` covers only `Testing`, not `omniecho-core`.
 
 ## Standing constraints
 
