@@ -1,7 +1,9 @@
 # BLOCKER — OmniEcho name / omniecho.com
 
-Recorded: 2026-09-18 · Status: **OPEN — on hold, unverified**
-Last attempt: 2026-09-18 — steps 1–5 blocked by egress policy (see log)
+Recorded: 2026-09-18 · Status: **OPEN — naming question only**
+Domain ownership still unverified (steps 1–5 blocked by egress policy).
+Nothing we hold is waiting on the domain — see the `omniecho-core`
+finding.
 
 Companion to `PRENOS.md`. Same rule: state does not live in chat
 scrollback. Update this file in the same commit as whatever changes it.
@@ -23,7 +25,7 @@ added and sending cannot be switched on.
 | A separate project "The Omni Echo" (Chris Warren) exists | CONFIRMED | Public press coverage (KPBS, Space 4 Art) |
 | `omniecho.com` resolves to A record `173.236.253.152` | UNVERIFIED | Reported in the card only; no lookup run here |
 | That unrelated project controls `omniecho.com` | UNVERIFIED | Press coverage shows a project exists; it does not show who holds the domain |
-| The domain blocks the Loops setup | PROPOSED | Follows only if the ownership claim above is confirmed |
+| The domain blocks the Loops setup | REFUTED on our side | Neither `Testing` nor `omniecho-core` contains anything that needs the domain — see the `omniecho-core` finding below |
 
 A press mention proves a *name* is in use. It proves nothing about
 registrar, registrant or DNS authority. Those are separate records and
@@ -118,23 +120,41 @@ Web search (a different, permitted channel) did return two things:
 - A separate `github.com/OmniEcho` organisation appears in results.
   Unverified — not inspected.
 
-### Material finding: `OmniSlack/omniecho-core`
+### `OmniSlack/omniecho-core` — read, and it settles the Loops question
 
-There is an **OmniEcho repository inside our own organisation**, confirmed
-against the GitHub API (not search index): `OmniSlack/omniecho-core`,
-public, `can_push: true`, last pushed **2026-09-17 19:07 UTC** — the same
-day this blocker was raised, roughly twenty minutes after PR #4 was
-opened.
+There is an **OmniEcho repository inside our own organisation**:
+`OmniSlack/omniecho-core`, public, last pushed **2026-09-17 19:07 UTC** —
+the same day this blocker was raised, about twenty minutes after PR #4 was
+opened. Read at `136298f` ("omniecho-core v0.3 — authority boundary
+evaluator, 17 tests"). Five files, 212 lines of source in total.
 
-This reframes the blocker. "OmniEcho" is not only an outside name; it is
-an active repository under our own org. Whether it is the thing the Loops
-plan belongs to, and whether it carries domain or sending configuration,
-is unknown — the repository is outside this session's allowed scope and
-was not read.
+It is **not a website, a product site, or anything that sends mail**. It is
+a dependency-free authority-boundary evaluator for AI reasoning
+(`Core.evaluate(proposal, context)` → `STOP > HOLD > CLEAR`), implementing
+the KOMPAS Core Design Canon v0.1. Its own README states: *"No
+dependencies. No network. No filesystem writes."* and *"External action
+boundary: closed"*.
 
-Until it is read, treat the name collision as **unresolved in both
-directions**: an unrelated art project uses the name publicly, and we
-ourselves have a repo under it.
+Verified directly rather than taken from the README:
+
+    grep -rinE "omniecho\.com|loops|dns|smtp|dkim|spf|sendgrid|resend|https?://"   # 0 matches
+    grep -rinE "fetch\(|http\.|https\.|require\(|import |net\.|dns\." core.js  # 0 matches
+    node --test core.test.js                                                      # 17/17 pass
+
+The test run reproduces the claim recorded in `EVIDENCE_UNIT.txt`
+(17 tests, 17 pass, exit 0) on Node v22.22.2.
+
+**Consequence for this blocker.** Neither repository under our control has
+any artefact that needs `omniecho.com`: `Testing` holds a static console
+that is not deployed, and `omniecho-core` is offline logic with no network
+code and a deliberately closed action boundary. So "the domain blocks
+Loops" has no target on our side — there is nothing here waiting on a DNS
+record. The blocker is real only as a **naming** question, and only if
+something that does not yet exist is meant to be published under that
+name.
+
+That reduces the domain question from blocking to preparatory. It does not
+answer who holds `omniecho.com` — that still needs steps 1–5.
 
 ## Standing constraints
 
@@ -148,14 +168,16 @@ ourselves have a repo under it.
 
 ## Next action
 
-Two things, in this order:
+1. **Decide what `omniecho.com` is actually for.** Nothing we hold needs
+   it today. If no artefact is planned for publication under that name,
+   the domain question can be closed rather than answered.
+2. **If it is still wanted: run steps 1–5** from a machine with outbound
+   access and paste the output here, then re-grade the table. If the
+   domain is held by the unrelated project, the decision is a rename or a
+   different domain — not a DNS workaround.
 
-1. **Read `OmniSlack/omniecho-core`.** It is ours and it is active. Before
-   arguing about an outside name collision, establish what we already
-   have under that name and whether any domain or sending config lives
-   there. Requires adding the repo to the session.
-2. **Run steps 1–5 from a machine with outbound access** and paste the
-   output here, then re-grade the table.
-
-If the domain turns out to be held by the unrelated project, the decision
-is a rename or a different domain — not a DNS workaround.
+Note on the name itself: the public "Omni Echo" is a sound-art
+installation, a different field entirely, and it publishes under
+`alloyelectric.com`. A collision on a `.com` is worth checking; a
+collision on the *name* across unrelated fields is a much weaker
+objection than the card implies.
