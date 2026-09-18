@@ -1,6 +1,6 @@
 # PRENOS — state of record
 
-Last updated: 2026-09-17
+Last updated: 2026-09-18
 
 This file exists so state does not live in chat scrollback. It is the
 handover note: what is in this repo, what is merged, and what is still
@@ -18,6 +18,14 @@ Three bodies of work live here:
   Plain HTML/CSS/JS, no build step. Open `omnimax/index.html`.
 - **Container setup** — `Dockerfile`, `docker-compose.yml`,
   `.dockerignore` for running an exercise in a hardened container.
+
+## Open blockers
+
+- **OmniEcho name / `omniecho.com`** — see `BLOCKER-OMNIECHO.md`. Raised
+  2026-09-18 from an external Project card. Affects naming and the
+  Loops/DNS plan only; no code in this repository references OmniEcho,
+  the domain, or Loops. Ownership of the domain is UNVERIFIED and no DNS
+  change is authorized.
 
 ## Status — everything is merged
 
