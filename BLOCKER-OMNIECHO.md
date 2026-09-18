@@ -141,9 +141,10 @@ ourselves have a repo under it.
 - No DNS changes are authorized. Nothing in this file requests any.
 - No Loops configuration, verification or sending is to be enabled
   while this blocker is open.
-- No outside API was called to produce this record; every line is
-  either local repository evidence or a re-statement of the card,
-  graded above.
+- Outside calls made for this record, all read-only and all authorized:
+  attempted RDAP/DNS/HTTP reads (blocked by egress policy, nothing
+  returned), web search, and GitHub repository listing. No write, no
+  registration, no Loops call.
 
 ## Next action
 
