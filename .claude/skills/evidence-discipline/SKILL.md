@@ -17,19 +17,32 @@ CLAIM, not a fact — treat it at 0% proven until you produce the log, the hash,
 or the number yourself. Re-derive it if you can; if you can't, say plainly that
 it is reported, not reproduced, and by whom.
 
+This skill is a CANDIDATE. It has not been through the blind with/without probe
+that the skills in the public portfolio went through.
+
 ## Confidence markers
 
-Tag every non-trivial claim, including your own, with one marker:
+Tag every non-trivial claim, including your own, with one marker. This is the
+same six-level scale as `claim-discipline` (Bulgarian original: `omniecho`),
+`izmerimo`, `nablyudatel`, `kompas` and `shadow-utilize`. That scale is defined
+in `claim-discipline` / `omniecho`; if the two ever differ, that definition wins.
 
-- 🟢 **Established** — you have byte-identical proof (a hash you computed matches,
-  a test you ran passed, a command output you saw yourself).
-- 🟡 **Probable** — indirect evidence supports it, but you have not verified it
-  directly (e.g. it matches known literature/behavior from memory, or a citation
-  you have not fetched).
-- 🔴 **Hypothesis** — an unverified idea, yours or someone else's. Not yet tested.
-- 🔵 **Synthesis / metaphor** — a structural or interpretive framing added on top
-  of source material. Never let this quietly become a 🟢 claim about mechanism.
-- ⚪ **Unverified / unknown** — genuinely don't know; say so instead of guessing.
+| Marker | Level | Meaning |
+|---|---|---|
+| 🟢 | 4 | **established** — shown by facts, data, code or a measurable trace |
+| 🟡 | 3 | **moderate** — logical and likely, without direct hard evidence now |
+| 🟠 | 2 | **low** — possible, weakly supported |
+| 🔴 | 1 | **hypothesis** — an assumption, a working theory to be tested |
+| 🔵 | 0 | **synthesis** — an image, model or analogy; never becomes a fact |
+| ⚪ | — | **unchecked** — not yet audited; say so instead of guessing |
+
+What this skill adds to the scale: when the claim is about code, tests, builds,
+files or counts, 🟢 needs evidence you produced yourself in this session — a
+hash you computed that matches, a test you ran that passed, a command output you
+saw. A report, a README or a summary that says "PASS" is at most 🟡 until you
+reproduce it.
+
+A chain carries the marker of its weakest link: 🟢 + 🔴 = 🔴.
 
 Never upgrade a marker because a claim was repeated, because you feel confident,
 or because it would be convenient if it were true.
